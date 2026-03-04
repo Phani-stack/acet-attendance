@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ACET Attendance Pro</title>
-
+    <title>ACET Attendance</title>
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><defs><linearGradient id='g' x1='0%' y1='0%' x2='100%' y2='100%'><stop offset='0%' style='stop-color:%233b82f6'/><stop offset='100%' style='stop-color:%231d4ed8'/></linearGradient></defs><rect width='100' height='100' rx='25' fill='url(%23g)'/><path d='M30 75 L50 25 L70 75 M38 60 L62 60' stroke='white' stroke-width='10' stroke-linecap='round' stroke-linejoin='round' fill='none'/></svg>">
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
@@ -78,7 +78,6 @@
 
     <nav class="flex justify-between items-center px-6 py-6 max-w-5xl mx-auto">
         <div class="flex items-center gap-2">
-
             <span class="font-bold tracking-tight text-sm">ACET<span class="text-blue-500">ATTENDANCE</span></span>
         </div>
 
@@ -127,7 +126,7 @@
                 <div class="glass-panel p-6 rounded-3xl col-span-1 md:col-span-2 flex flex-col justify-between min-h-[160px]">
                     <div>
                         <span class="status-badge bg-blue-500/10 text-blue-500">Verified Student</span>
-                        <h2 id="userNameDisplay" class="text-3xl font-black mt-3 truncate">---</h2>
+                        <h2 id="userNameDisplay" class="text-2xl md:text-3xl font-black mt-3 leading-tight break-words sm:truncate">---</h2>
                     </div>
                     <div id="globalAction" class="text-sm font-medium"></div>
                 </div>
@@ -276,7 +275,7 @@
             if (overall >= 75) {
                 const canBunk = Math.floor((totalAtt / 0.75) - totalCond);
                 const bunkDays = Math.floor(canBunk / 7);
-                action.className = "mt-4 font-bold text-emerald-500 flex flex-wrap items-center gap-2";
+                action.className = "mt-4 font-bold text-emerald-400 flex flex-wrap items-center gap-2";
                 action.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i> Safe to bunk ${canBunk} classes <span class="text-slate-500 font-medium text-xs bg-slate-500/5 px-2 py-0.5 rounded-lg">~${bunkDays} days</span>`;
             } else {
                 const mustAttend = Math.ceil((0.75 * totalCond - totalAtt) / 0.25);
