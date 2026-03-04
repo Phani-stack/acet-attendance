@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ACET attendance</title>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --bg: #030712;
+            --accent: #3b82f6;
+        }
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(59, 130, 246, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+            color: #f8fafc;
+        }
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        /* KILL AUTOFILL WHITE BACKGROUND */
+        input:-webkit-autofill,
+        input:-webkit-autofill:hover, 
+        input:-webkit-autofill:focus, 
+        input:-webkit-autofill:active {
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: #ffffff !important;
+            transition: background-color 5000s ease-in-out 0s;
+            box-shadow: inset 0 0 20px 20px #030712 !important;
+        }
+
+        input::-webkit-contacts-auto-fill-button, 
+        input::-webkit-credentials-auto-fill-button {
+            visibility: hidden;
+            pointer-events: none;
+            position: absolute;
+            right: 0;
+        }
+
+        .shimmer {
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.05), transparent);
+            background-size: 200% 100%;
+            animation: shimmer 2s infinite;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+    </style>
+</head>
+<body class="min-h-screen p-6 md:p-12 flex flex-col items-center">
+
+    <div class="w-full max-w-4xl text-center mb-10">
+        <h1 class="text-4xl md:text-5xl font-extrabold tracking-tight mb-2 bg-gradient-to-r from-blue-400 to-emerald-400 bg-clip-text text-transparent">
+            Attendance ACET
+        </h1>
+        <p class="text-slate-400 font-medium tracking-widest uppercase text-xs">ACET quick attendance checker</p>
+    </div>
+
+    <div id="searchContainer" class="w-full max-w-xl mb-12">
+        <div class="glass p-2 rounded-2xl flex items-center gap-2 group transition-all duration-300 focus-within:ring-2 focus-within:ring-blue-500/50 focus-within:bg-white/[0.05]">
+            
+            <div class="pl-4 text-slate-500 group-focus-within:text-blue-400 transition-colors">
+                <i data-lucide="scan-line" class="w-5 h-5 animate-pulse"></i>
+            </div>
+
+            <div class="relative flex-1 px-2">
+                <input type="text" 
+                    id="username" 
+                    name="acet-auth-field"
+                    placeholder="Enter Roll Number..." 
+                    autocomplete="one-time-code"
+                    spellcheck="false"
+                    class="w-full bg-transparent border-none outline-none py-3 text-lg font-bold text-white placeholder:text-slate-600 focus:placeholder:opacity-0 transition-all">
+                
+                <div class="absolute bottom-1 left-0 w-0 h-[1px] bg-gradient-to-r from-blue-500 to-transparent group-focus-within:w-full transition-all duration-500"></div>
+            </div>
+
+            <button onclick="fetchAttendance()" 
+                class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-black transition-all hover:scale-105 active:scale-95 flex items-center gap-2 shadow-lg shadow-blue-900/40 uppercase tracking-tighter text-sm">
+                Analyze <i data-lucide="shield-check" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <div id="loader" class="hidden flex flex-col items-center gap-4 py-20">
+        <div class="w-12 h-12 border-4 border-blue-500/20 border-t-blue-500 rounded-full animate-spin"></div>
+        <p class="text-blue-400 font-bold tracking-widest animate-pulse">SYNCHRONIZING...</p>
+    </div>
+
+    <div id="results" class="hidden w-full max-w-4xl space-y-6">
+        
+        <div class="glass rounded-3xl p-8 flex flex-col md:flex-row justify-between items-center gap-8 relative overflow-hidden border border-white/10">
+            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl rounded-full"></div>
+            
+            <div class="text-center md:text-left">
+                <div class="flex items-center gap-2 mb-1 justify-center md:justify-start">
+                    <span class="w-2 h-2 bg-emerald-400 rounded-full animate-pulse"></span>
+                    <span class="text-xs font-bold text-slate-500 tracking-[0.2em] uppercase">Student Profile</span>
+                </div>
+                <h2 id="userNameDisplay" class="text-3xl font-extrabold text-white">---</h2>
+                <p id="globalAction" class="mt-2 text-slate-400 font-medium"></p>
+            </div>
+
+            <div class="flex flex-col items-center">
+                <div id="overallPerc" class="text-6xl md:text-7xl font-black text-blue-500 tabular-nums leading-none">0%</div>
+                <span class="text-slate-500 font-bold uppercase text-[10px] mt-2 tracking-widest">Total Attendance</span>
+            </div>
+        </div>
+
+        <div class="glass rounded-3xl overflow-hidden border border-white/10">
+            <div class="grid grid-cols-3 px-8 py-4 bg-white/5 border-b border-white/5">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Course Module</span>
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest text-center">Sessions</span>
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest text-right">Success Rate</span>
+            </div>
+            <div id="subjectRows" class="divide-y divide-white/5">
+                </div>
+        </div>
+    </div>
+    
+    <!-- Signature Footer -->
+<div class="w-full flex justify-center mt-20 mb-6">
+    <span class="text-slate-600 text-xs tracking-[0.4em] font-extrabold hover:text-blue-500 transition-colors duration-300">
+        T H E B O B
+    </span>
+</div>
+
+    <script>
+        lucide.createIcons();
+
+        async function fetchAttendance() {
+            const user = document.getElementById('username').value;
+            if (!user) return;
+
+            const loader = document.getElementById('loader');
+            const results = document.getElementById('results');
+            
+            gsap.to('#results', { opacity: 0, y: 20, duration: 0.3 });
+            setTimeout(() => {
+                results.classList.add('hidden');
+                loader.classList.remove('hidden');
+            }, 300);
+
+            const formData = new FormData();
+            formData.append('username', user);
+
+            try {
+                const response = await fetch('http://127.0.0.1:8000/api/attendance', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+                
+                setTimeout(() => {
+                    loader.classList.add('hidden');
+                    updateUI(result);
+                }, 1000);
+
+            } catch (e) {
+                loader.classList.add('hidden');
+                alert("Database connection interrupted.");
+            }
+        }
+
+        function updateUI(data) {
+            const results = document.getElementById('results');
+            const searchContainer = document.getElementById('searchContainer');
+
+            // 1. INVALID USER HANDLING
+            if (!data.name || data.name.toLowerCase() === "undefined") {
+                results.classList.add('hidden');
+                gsap.to(searchContainer, { x: -10, duration: 0.1, repeat: 5, yoyo: true });
+                return;
+            }
+
+            results.classList.remove('hidden');
+            gsap.fromTo('#results', { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.8, ease: "expo.out" });
+
+            document.getElementById('userNameDisplay').innerText = data.name.toUpperCase();
+
+            let totalCond = 0, totalAtt = 0;
+            const tbody = document.getElementById('subjectRows');
+            tbody.innerHTML = '';
+
+            data.data.forEach((sub, index) => {
+                const cond = parseInt(sub[2]);
+                const att = parseInt(sub[3]);
+                const perc = parseFloat(sub[4]);
+                totalCond += cond; totalAtt += att;
+
+                const row = document.createElement('div');
+                row.className = 'grid grid-cols-3 px-8 py-6 hover:bg-white/[0.02] transition-colors items-center';
+                row.innerHTML = `
+                    <div class="flex flex-col">
+                        <span class="text-white font-bold text-sm md:text-base">${sub[1]}</span>
+                        <span class="text-slate-500 text-[10px] font-medium uppercase mt-1 tracking-tighter">Academic Session</span>
+                    </div>
+                    <div class="text-center font-bold text-slate-300 tabular-nums">${att}<span class="text-slate-600 mx-1">/</span>${cond}</div>
+                    <div class="text-right">
+                        <span class="px-3 py-1 rounded-full text-xs font-black ${perc < 75 ? 'bg-red-500/10 text-red-500' : 'bg-emerald-500/10 text-emerald-400'}">
+                            ${perc}%
+                        </span>
+                    </div>
+                `;
+                tbody.appendChild(row);
+                gsap.from(row, { opacity: 0, x: -20, delay: 0.05 * index, duration: 0.4 });
+            });
+
+            const overall = ((totalAtt / totalCond) * 100).toFixed(2);
+            const percEl = document.getElementById('overallPerc');
+            
+            // Percentage Roll-up Animation
+            gsap.fromTo(percEl, { innerText: 0 }, { 
+                innerText: overall, 
+                duration: 2, 
+                ease: "power4.out",
+                snap: { innerText: 0.1 },
+                onUpdate: () => percEl.innerText += "%"
+            });
+
+            const action = document.getElementById('globalAction');
+            if (overall >= 75) {
+                const canBunk = Math.floor((totalAtt / 0.75) - totalCond);
+                action.className = "mt-2 font-bold text-emerald-400 flex items-center gap-2";
+                action.innerHTML = `<i data-lucide="shield-check" class="w-4 h-4"></i> STATUS: SAFE (${canBunk} classes can bunk / ${Math.floor(canBunk/7)} days)`;
+            } else {
+                const mustAttend = Math.ceil((0.75 * totalCond - totalAtt) / 0.25)
+                action.className = "mt-2 font-bold text-red-500 flex items-center gap-2";
+                action.innerHTML = `<i data-lucide="alert-triangle" class="w-4 h-4"></i> STATUS: Have to attend (Attend ${mustAttend} classes / ${Math.ceil(mustAttend/7)} days)`;
+            }
+            lucide.createIcons();
+        }
+    </script>
+</body>
+</html>
