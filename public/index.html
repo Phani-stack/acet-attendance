@@ -72,6 +72,33 @@
             font-weight: 800;
             letter-spacing: 0.05em;
         }
+
+        /* Holiday Table Styles */
+        .holiday-table-container {
+            max-width: 1024px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        .holiday-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+        }
+        .holiday-table th {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-sub);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .holiday-table td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+        .holiday-table tr:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
     </style>
 </head>
 <body class="min-h-screen pb-12">
@@ -92,6 +119,8 @@
         </h1>
         <p class="text-[10px] font-bold text-blue-500 uppercase tracking-[0.3em] mt-2">quick attendance for acet</p>
     </header>
+
+
 
     <main class="max-w-5xl mx-auto px-4">
         <div id="searchContainer" class="max-w-xl mx-auto mb-12">
@@ -140,6 +169,44 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4" id="subjectRows"></div>
         </div>
     </main>
+
+    <br><br>
+    <section class="holiday-table-container">
+        <div class="glass-panel p-6 rounded-3xl overflow-x-auto">
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+                <i data-lucide="calendar" class="text-blue-500"></i> Public Holidays 2025-26
+            </h2>
+            <table class="holiday-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Day</th>
+                        <th>Festival / Occasion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>15-08-2025</td><td>Friday</td><td>Independence Day</td></tr>
+                    <tr><td>16-08-2025</td><td>Saturday</td><td>Krishnaastami</td></tr>
+                    <tr><td>27-08-2025</td><td>Wednesday</td><td>Vinayaka Chavithi</td></tr>
+                    <tr><td>05-09-2025</td><td>Friday</td><td>Milad-un-Nabi</td></tr>
+                    <tr><td>28-09-2025 to 05-10-2025</td><td>Sunday to Sunday</td><td>Dasara Holidays</td></tr>
+                    <tr><td>20-10-2025</td><td>Monday</td><td>Deepavali</td></tr>
+                    <tr><td>25-12-2025</td><td>Thursday</td><td>Christmas</td></tr>
+                    <tr><td>01-01-2026</td><td>Thursday</td><td>New Year Day</td></tr>
+                    <tr><td>11-01-2026 to 18-01-2026</td><td>Sunday to Sunday</td><td>Pongal Holidays</td></tr>
+                    <tr><td>26-01-2026</td><td>Monday</td><td>Republic Day</td></tr>
+                    <tr><td>20-02-2026</td><td>Friday</td><td>Ramzan</td></tr>
+                    <tr><td>03-03-2026</td><td>Tuesday</td><td>Holi</td></tr>
+                    <tr><td>20-03-2026</td><td>Friday</td><td>Ugadi</td></tr>
+                    <tr><td>28-03-2026</td><td>Saturday</td><td>Sri Ramanavami</td></tr>
+                    <tr><td>14-04-2026</td><td>Tuesday</td><td>Dr. B. R. Ambedkar Birthday</td></tr>
+                    <tr><td>17-04-2026</td><td>Friday</td><td>Good Friday</td></tr>
+                    <tr><td>27-05-2026</td><td>Wednesday</td><td>Bakrid</td></tr>
+                    <tr><td>16-06-2026</td><td>Tuesday</td><td>Moharram</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </section>
 
     <footer class="mt-20 text-center pb-10">
         <span class="text-slate-500 text-[10px] tracking-[0.5em] font-black uppercase">
